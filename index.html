@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MeAI → 가계약 생성 안내</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #f0f2f5;
+      font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      background: #C8001E;
+      padding: 20px 24px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+    }
+    .header-logo {
+      color: #fff;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      white-space: nowrap;
+    }
+    .header-divider {
+      width: 1px;
+      height: 22px;
+      background: rgba(255,255,255,0.35);
+    }
+    .header-title {
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+    }
+    .header-badge {
+      margin-left: auto;
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(160deg, #b0001a 0%, #E8001D 55%, #ff4d6d 100%);
+      color: white;
+      text-align: center;
+      padding: 40px 24px 36px;
+    }
+    .hero h1 {
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.35;
+      letter-spacing: -0.5px;
+    }
+    .hero p {
+      font-size: 14px;
+      margin-top: 10px;
+      opacity: 0.88;
+      line-height: 1.6;
+    }
+    .hero-steps {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 22px;
+      flex-wrap: wrap;
+    }
+    .step-chip {
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.35);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 20px;
+    }
+
+    /* ── SLIDES ── */
+    .slides-wrapper {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 36px 20px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .slide-card {
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.10);
+      transition: box-shadow 0.25s, transform 0.25s;
+    }
+    .slide-card:hover {
+      box-shadow: 0 8px 32px rgba(200,0,30,0.18);
+      transform: translateY(-2px);
+    }
+
+    .slide-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 20px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .slide-num {
+      background: #C8001E;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .slide-info {}
+    .slide-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+    .slide-desc {
+      font-size: 12px;
+      color: #888;
+      margin-top: 2px;
+    }
+
+    .slide-img-wrap {
+      background: #fafafa;
+      padding: 0;
+      line-height: 0;
+    }
+    .slide-img {
+      width: 100%;
+      display: block;
+      cursor: zoom-in;
+      transition: opacity 0.2s;
+    }
+    .slide-img:hover { opacity: 0.95; }
+
+    /* ── LIGHTBOX ── */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.88);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox img {
+      max-width: 95vw;
+      max-height: 92vh;
+      border-radius: 8px;
+      box-shadow: 0 8px 60px rgba(0,0,0,0.6);
+      cursor: zoom-out;
+    }
+    .lightbox-close {
+      position: absolute;
+      top: 18px; right: 22px;
+      color: #fff;
+      font-size: 32px;
+      cursor: pointer;
+      line-height: 1;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+    .lightbox-close:hover { opacity: 1; }
+
+    /* ── FOOTER ── */
+    .footer {
+      background: #1a1a1a;
+      color: #888;
+      text-align: center;
+      font-size: 12px;
+      padding: 22px 16px;
+      line-height: 1.8;
+    }
+    .footer strong { color: #C8001E; }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <span class="header-logo">meritz</span>
+    <div class="header-divider"></div>
+    <span class="header-title">MeAI 서비스 공지</span>
+    <span class="header-badge">신기능 안내</span>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero">
+    <h1>MeAI → 가계약 생성<br>AI가입설계도우미 연동</h1>
+    <p>MeAI에서 가계약을 직접 생성하고<br>신영업포탈 AI가입설계도우미와 연동되는 프로세스를 안내합니다.</p>
+    <div class="hero-steps">
+      <span class="step-chip">① 가계약 생성하기</span>
+      <span class="step-chip">② 팝업 확인 & 포탈 연동</span>
+      <span class="step-chip">③ 가계약 구성 요약</span>
+    </div>
+  </div>
+
+  <!-- Slides -->
+  <div class="slides-wrapper">
+
+    <div class="slide-card">
+      <div class="slide-header">
+        <div class="slide-num">1</div>
+        <div class="slide-info">
+          <div class="slide-title">가계약 생성하기 버튼 클릭</div>
+          <div class="slide-desc">MeAI '맞춤대화' 채팅창 → '가계약 해줘' 입력 → 답변 하단 '생성하기' 클릭</div>
+        </div>
+      </div>
+      <div class="slide-img-wrap">
+        <img class="slide-img" src="slide-1.jpg" alt="슬라이드 1 - 가계약 생성하기" onclick="openLightbox(this.src)">
+      </div>
+    </div>
+
+    <div class="slide-card">
+      <div class="slide-header">
+        <div class="slide-num">2</div>
+        <div class="slide-info">
+          <div class="slide-title">가계약 생성 안내 팝업 & 신영업포탈 연동</div>
+          <div class="slide-desc">MeAI 팝업 생성 → 신영업포탈 'AI 가입설계도우미' 화면과 동시 생성</div>
+        </div>
+      </div>
+      <div class="slide-img-wrap">
+        <img class="slide-img" src="slide-2.jpg" alt="슬라이드 2 - 팝업 및 포탈 연동" onclick="openLightbox(this.src)">
+      </div>
+    </div>
+
+    <div class="slide-card">
+      <div class="slide-header">
+        <div class="slide-num">3</div>
+        <div class="slide-info">
+          <div class="slide-title">가계약 생성 화면 이동 & 구성 요약</div>
+          <div class="slide-desc">신영업포탈 → 가계약 생성 화면 이동 / MeAI → 가계약 구성 요약 화면 이동</div>
+        </div>
+      </div>
+      <div class="slide-img-wrap">
+        <img class="slide-img" src="slide-3.jpg" alt="슬라이드 3 - 가계약 구성 요약" onclick="openLightbox(this.src)">
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <span class="lightbox-close" onclick="closeLightbox()">×</span>
+    <img id="lightbox-img" src="" alt="확대 보기">
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <strong>meritz</strong> 메리츠화재 · MeAI 서비스 공지<br>
+    문의사항은 담당 부서로 연락해 주세요.
+  </div>
+
+  <script>
+    function openLightbox(src) {
+      document.getElementById('lightbox-img').src = src;
+      document.getElementById('lightbox').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+  </script>
+
+</body>
+</html>
